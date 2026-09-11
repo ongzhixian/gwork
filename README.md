@@ -1,0 +1,2 @@
+# gwork
+Go monorepo workspace

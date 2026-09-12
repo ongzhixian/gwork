@@ -1,3 +1,3 @@
-# DynamoDb
+# S3
 
-Example of accessing AWS DynamoDb in Go.
+Example of accessing AWS S3 in Go.

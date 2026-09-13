@@ -41,6 +41,14 @@ pipeline {
 
     }
 
+    post {
+        success {
+            // Archive the zip file in Jenkins for record-keeping
+            //archiveArtifacts artifacts: 'helloworld.exe', fingerprint: true
+            archiveArtifacts artifacts: 'example/helloworld/helloworld.exe', fingerprint: true
+        }
+    }
+
 
 }
 

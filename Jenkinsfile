@@ -16,6 +16,9 @@ pipeline {
         stage('Build Go Binary') {
             steps {
                 powershell '''
+                    # Go the module directory
+                    cd .\example\lambda-func\
+
                     # Set Linux target architecture for AWS Lambda
                     $Env:GOOS = "linux"
                     $Env:GOARCH = "amd64"

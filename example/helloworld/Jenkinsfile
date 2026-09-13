@@ -21,6 +21,16 @@ pipeline {
             steps {
                 printGoEnvironmentVariables('BEFORE BUILD')
 
+                def changeLogSets = currentBuild.changeSets
+                for (int i = 0; i < changeLogSets.size(); i++) {
+                    def entries = changeLogSets[i].items
+                    for (int j = 0; j < entries.size(); j++) {
+                        for (path in entries[j].affectedPaths) {
+                            echo ${path}
+                        }
+                    }
+                }
+
                 powershell '''
                     # 1. Initialize the temporary workspace
                     go work init

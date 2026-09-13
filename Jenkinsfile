@@ -17,7 +17,7 @@ pipeline {
             steps {
                 powershell '''
                     # Go the module directory
-                    cd .\example\lambda-func\
+                    cd ./example/lambda-func
 
                     # Set Linux target architecture for AWS Lambda
                     $Env:GOOS = "linux"

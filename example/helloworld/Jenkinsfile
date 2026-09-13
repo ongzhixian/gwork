@@ -20,16 +20,19 @@ pipeline {
         stage('Build Go Binary') {
             when {
                 expression {
-                    // 1. Checks if it's a manual build (no changeset), fallback to manual Git diff check
-                    // 2. Returns true if changes are found in 'example/helloworld', allowing stage execution
+                    // 1. If manually triggered (empty changeset), run native PowerShell Git diff
                     if (currentBuild.changeSets.isEmpty()) {
-                        return sh(
-                            script: "git diff --name-only HEAD~1 HEAD | grep '^example/helloworld/'", 
+                        // Returns 0 (success) if the pattern matches a changed file path
+                        def exitCode = powershell(
+                            script: "git diff --name-only HEAD~1 HEAD | Select-String -Pattern '^example/helloworld/' -Quiet", 
                             returnStatus: true
-                        ) == 0
+                        )
+                        // In PowerShell, -Quiet returns True/False. 
+                        // Jenkins returnStatus captures the exit status (0 means a match was found)
+                        return exitCode == 0
                     }
                     
-                    // 3. If triggered by SCM webhook, standard Jenkins changeset rules apply
+                    // 2. If triggered by SCM webhook, standard Jenkins changeset rules apply
                     return currentBuild.changeSets.any { changeLogSet ->
                         changeLogSet.items.any { entry ->
                             entry.affectedPaths.any { path -> path.startsWith('example/helloworld/') }
@@ -39,6 +42,24 @@ pipeline {
             }
             steps {
                 printGoEnvironmentVariables('BEFORE BUILD')
+
+                script {
+                    // Extract all change sets from the current build
+                    def changeLogSets = currentBuild.changeSets
+                    
+                    for (int i = 0; i < changeLogSets.size(); i++) {
+                        def entries = changeLogSets[i].items
+                        for (int j = 0; j < entries.length; j++) {
+                            def entry = entries[j]
+                            
+                            // Iterate through the affected paths of each commit
+                            def files = entry.affectedPaths
+                            for (int k = 0; k < files.size(); k++) {
+                                echo "Modified File: ${files[k]}"
+                            }
+                        }
+                    }
+                }
 
                 powershell '''
                     # 1. Initialize the temporary workspace

@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Enforce PowerShell Core as the default shell step execution
+        JENKINS_POWERSHELL_COMMAND = 'pwsh'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Go Binary') {
+            steps {
+                powershell '''
+                    Write-Host "BEFORE"
+
+                    ls env:
+
+                    # Go the module directory
+                    cd ./example/helloworld
+
+                    $Env:GOOS="windows"
+                    $Env:GOARCH="amd64"
+                    $Env:CGO_ENABLED="0"
+
+                    Write-Host "AFTER"
+                    ls env:
+                    
+                    # Compile the binary
+                    go build -o helloworld.exe
+                    
+                '''
+            }
+        }
+
+    }
+
+    post {
+        success {
+            // Archive the zip file in Jenkins for record-keeping
+            archiveArtifacts artifacts: 'helloworld.exe', fingerprint: true
+        }
+    }
+}

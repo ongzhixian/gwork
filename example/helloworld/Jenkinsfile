@@ -22,17 +22,18 @@ pipeline {
                 printGoEnvironmentVariables('BEFORE BUILD')
 
                 powershell '''
-                    # 1. Create temporary workspace file
+                    # 1. Initialize the temporary workspace
                     go work init
-
-                    # 2. Link modules context locally
                     go work use ./example/module1
                     go work use ./example/helloworld
 
-                    # 3. Compile the binary forcing module evaluation (-mod=mod)
-                    go build -mod=mod -o ./example/helloworld/helloworld.exe ./example/helloworld
+                    # 2. Resync the workspace metadata with your checked-in vendor folder
+                    go work vendor
 
-                    # 4. Cleanup workspace artifacts cleanly
+                    # 3. Compile by explicitly reusing the synchronized vendor directory
+                    go build -mod=vendor -o ./example/helloworld/helloworld.exe ./example/helloworld
+
+                    # 4. Cleanup workspace files, leaving your vendor folder untouched
                     Remove-Item go.work, go.work.sum -ErrorAction SilentlyContinue
                 '''
             }

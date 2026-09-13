@@ -18,6 +18,25 @@ pipeline {
         }
 
         stage('Build Go Binary') {
+            when {
+                expression {
+                    // 1. Checks if it's a manual build (no changeset), fallback to manual Git diff check
+                    // 2. Returns true if changes are found in 'example/helloworld', allowing stage execution
+                    if (currentBuild.changeSets.isEmpty()) {
+                        return sh(
+                            script: "git diff --name-only HEAD~1 HEAD | grep '^example/helloworld/'", 
+                            returnStatus: true
+                        ) == 0
+                    }
+                    
+                    // 3. If triggered by SCM webhook, standard Jenkins changeset rules apply
+                    return currentBuild.changeSets.any { changeLogSet ->
+                        changeLogSet.items.any { entry ->
+                            entry.affectedPaths.any { path -> path.startsWith('example/helloworld/') }
+                        }
+                    }
+                }
+            }
             steps {
                 printGoEnvironmentVariables('BEFORE BUILD')
 

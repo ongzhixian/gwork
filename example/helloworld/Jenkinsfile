@@ -27,8 +27,11 @@ pipeline {
 
                     # Compile the binary
                     go build -o helloworld.exe
+
+                    $Env:GOOS="linux"
                     
                 '''
+                printGoEnvironmentVariables('BEFORE')
             }
         }
 
@@ -43,12 +46,13 @@ pipeline {
 }
 
 def printGoEnvironmentVariables(String comment) {
-    // Triple double quotes (""") allow Groovy variable interpolation
     powershell """
         Write-Host "Comment         = ${comment}"
         Write-Host "Stage           = ${env.STAGE_NAME}"
-        Write-Host "Env:GOOS        = \$($env:GOOS)"
-        Write-Host "Env:GOARCH      = \$($env:GOARCH)"
-        Write-Host "Env:CGO_ENABLED = \$($env:CGO_ENABLED)"
+        
+        # Single quotes protect these from Groovy manipulation completely
+        Write-Host 'Env:GOOS        =' \$env:GOOS
+        Write-Host 'Env:GOARCH      =' \$env:GOARCH
+        Write-Host 'Env:CGO_ENABLED =' \$env:CGO_ENABLED
     """
 }

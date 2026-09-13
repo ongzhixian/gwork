@@ -19,15 +19,12 @@ pipeline {
 
         stage('Build Go Binary') {
             steps {
+                printGoEnvironmentVariables('BEFORE')
                 powershell '''
-
-                    printGoEnvironmentVariables('BEFORE')
 
                     # Go the module directory
                     cd ./example/helloworld
 
-                    printGoEnvironmentVariables('AFTER')
-                 
                     # Compile the binary
                     go build -o helloworld.exe
                     

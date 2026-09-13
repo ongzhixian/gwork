@@ -28,8 +28,8 @@ pipeline {
                     # Compile the binary
                     go build -o helloworld.exe
 
-                    $Env:GOOS="linux"
-                    
+                    go build -o ./example/helloworld/helloworld.exe ./example/helloworld
+
                 '''
                 printGoEnvironmentVariables('BEFORE')
             }
@@ -40,7 +40,8 @@ pipeline {
     post {
         success {
             // Archive the zip file in Jenkins for record-keeping
-            archiveArtifacts artifacts: 'helloworld.exe', fingerprint: true
+            //archiveArtifacts artifacts: 'helloworld.exe', fingerprint: true
+            archiveArtifacts artifacts: 'example/helloworld/helloworld.exe', fingerprint: true
         }
     }
 }

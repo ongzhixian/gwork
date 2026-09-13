@@ -18,7 +18,9 @@ pipeline {
                 powershell '''
                     Write-Host "BEFORE"
 
-                    ls env:
+                    Write-Host "Env:GOOS        =$($env:GOOS)"
+                    Write-Host "Env:GOARCH      =$($env:GOARCH)"
+                    Write-Host "Env:CGO_ENABLED =$($env:CGO_ENABLED)"
 
                     # Go the module directory
                     cd ./example/helloworld
@@ -28,7 +30,9 @@ pipeline {
                     $Env:CGO_ENABLED="0"
 
                     Write-Host "AFTER"
-                    ls env:
+                    Write-Host "Env:GOOS        =$($env:GOOS)"
+                    Write-Host "Env:GOARCH      =$($env:GOARCH)"
+                    Write-Host "Env:CGO_ENABLED =$($env:CGO_ENABLED)"
                     
                     # Compile the binary
                     go build -o helloworld.exe

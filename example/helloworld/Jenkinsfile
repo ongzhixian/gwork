@@ -22,8 +22,13 @@ pipeline {
                 printGoEnvironmentVariables('BEFORE')
                 powershell '''
 
+                    # Go the module directory
+                    cd ./example/helloworld
+
                     # Compile the binary
-                    go build -o ./example/helloworld/helloworld.exe example/helloworld
+                    go build -o helloworld.exe
+
+                    go build -o ./example/helloworld/helloworld.exe ./example/helloworld
 
                 '''
                 printGoEnvironmentVariables('BEFORE')

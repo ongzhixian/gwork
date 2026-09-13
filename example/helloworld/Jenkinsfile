@@ -20,7 +20,7 @@ pipeline {
         stage('Build Go Binary') {
             steps {
                 printGoEnvironmentVariables('BEFORE BUILD')
-                
+
                 powershell '''
 
                     # Go the module directory
@@ -29,7 +29,7 @@ pipeline {
                     # Compile the binary
                     # go build -o helloworld.exe
 
-                    go build -o ./example/helloworld/helloworld.exe example/helloworld
+                    go build -C ./example/helloworld -o ./example/helloworld/helloworld.exe 
 
                 '''
             }

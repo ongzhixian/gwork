@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'windows' } // Targets a Windows builder agent
+    agent any
     
     environment {
         // Enforce PowerShell Core as the default shell step execution

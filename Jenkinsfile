@@ -35,7 +35,8 @@ pipeline {
                 powershell '''
                     # Package the binary into a zip deployment artifact
                     # Compress-Archive -Path bootstrap -DestinationPath main.zip -Force
-                    & "$env:USERPROFILE/Go/bin/build-lambda-zip.exe" -o myFunction.zip bootstrap
+                    $env:USERPROFILE
+                    #& "$env:USERPROFILE/Go/bin/build-lambda-zip.exe" -o myFunction.zip bootstrap
                     
                     # Clean up the raw Linux binary from workspace
                     ls

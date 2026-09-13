@@ -38,7 +38,8 @@ pipeline {
                     & "$env:USERPROFILE/Go/bin/build-lambda-zip.exe" -o myFunction.zip bootstrap
                     
                     # Clean up the raw Linux binary from workspace
-                    Remove-Item bootstrap
+                    ls
+                    #Remove-Item bootstrap
                 '''
             }
         }

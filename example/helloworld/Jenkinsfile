@@ -23,7 +23,7 @@ pipeline {
                 powershell '''
 
                     # Compile the binary
-                    go build -o ./example/helloworld/helloworld.exe ./example/helloworld
+                    go build -o ./example/helloworld/helloworld.exe example/helloworld
 
                 '''
                 printGoEnvironmentVariables('BEFORE')

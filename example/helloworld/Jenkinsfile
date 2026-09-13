@@ -22,15 +22,18 @@ pipeline {
                 printGoEnvironmentVariables('BEFORE BUILD')
 
                 powershell '''
+                    # 1. Create temporary workspace file
+                    go work init
 
-                    # Go the module directory
-                    # cd ./example/helloworld
+                    # 2. Link modules context locally
+                    go work use ./example/module1
+                    go work use ./example/helloworld
 
-                    # Compile the binary
-                    # go build -o helloworld.exe
+                    # 3. Compile the binary using the workspace mapping
+                    go build -o ./example/helloworld/helloworld.exe ./example/helloworld
 
-                    go build -C ./example/helloworld -o ./example/helloworld/helloworld.exe 
-
+                    # 4. Cleanup workspace artifacts cleanly
+                    Remove-Item go.work, go.work.sum -ErrorAction SilentlyContinue
                 '''
             }
         }

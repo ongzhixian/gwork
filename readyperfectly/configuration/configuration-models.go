@@ -13,3 +13,7 @@ type DBConfig struct {
 	Port int    `json:"port"`
 	User string `json:"user"`
 }
+
+type ApplicationCommandLineArguments struct {
+	ApplicationConfigurationFilePath string
+}

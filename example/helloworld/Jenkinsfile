@@ -19,6 +19,24 @@ pipeline {
 
         stage('Build Go Binary') {
             when {
+                script {
+                    // Extract all change sets from the current build
+                    def changeLogSets = currentBuild.changeSets
+                    
+                    for (int i = 0; i < changeLogSets.size(); i++) {
+                        def entries = changeLogSets[i].items
+                        for (int j = 0; j < entries.length; j++) {
+                            def entry = entries[j]
+                            
+                            // Iterate through the affected paths of each commit
+                            def files = entry.affectedPaths
+                            for (int k = 0; k < files.size(); k++) {
+                                echo "Modified File: ${files[k]}"
+                            }
+                        }
+                    }
+                }
+
                 expression {
                     // 1. If manually triggered (empty changeset), run native PowerShell Git diff
                     if (currentBuild.changeSets.isEmpty()) {
@@ -43,23 +61,7 @@ pipeline {
             steps {
                 printGoEnvironmentVariables('BEFORE BUILD')
 
-                script {
-                    // Extract all change sets from the current build
-                    def changeLogSets = currentBuild.changeSets
-                    
-                    for (int i = 0; i < changeLogSets.size(); i++) {
-                        def entries = changeLogSets[i].items
-                        for (int j = 0; j < entries.length; j++) {
-                            def entry = entries[j]
-                            
-                            // Iterate through the affected paths of each commit
-                            def files = entry.affectedPaths
-                            for (int k = 0; k < files.size(); k++) {
-                                echo "Modified File: ${files[k]}"
-                            }
-                        }
-                    }
-                }
+
 
                 powershell '''
                     # 1. Initialize the temporary workspace

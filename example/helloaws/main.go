@@ -1,39 +1,39 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"readyperfectly/aws"
 )
 
 func main() {
-	// Using the SDK's default configuration, load additional config
-	// and credentials values from the environment variables, shared
-	// credentials, and shared configuration files
-	//cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithSharedConfigProfile("zhixian"))
+
+	awsServiceFactory, err := aws.GetAwsServiceFactory("zhixian")
 	if err != nil {
-		log.Fatalf("unable to load SDK config, %v", err)
+		log.Fatalf("Initialization error: %v", err)
 	}
 
-	// Using the Config value, create the DynamoDB client
-	svc := dynamodb.NewFromConfig(cfg)
+	// Access factory.Config to construct S3, DynamoDB, or other AWS clients
 
-	// Build the request with its input parameters
-	resp, err := svc.ListTables(context.TODO(), &dynamodb.ListTablesInput{
-		Limit: aws.Int32(5),
-	})
-	if err != nil {
-		log.Fatalf("failed to list tables, %v", err)
-	}
+	// awsServiceFactory := aws.AwsServiceFactory{
+	// 	ProfileName: "zhixian",
+	// }
+	log.Println(awsServiceFactory)
 
-	fmt.Println("Tables:")
-	for _, tableName := range resp.TableNames {
-		fmt.Println(tableName)
-	}
+	dynamoDbService := awsServiceFactory.GetDynamoDbService()
+	log.Println(dynamoDbService)
+
+	// dynamoDbService := dynamoDb.DynamoDbService{
+	// 	Profile: "SomeProf",
+	// }
+
+	// fmt.Print(dynamoDbService)
+
+	// dynamoDb.DoDynamo()
+
+	// asd := DynamoDbService{
+	// 	Profile: "asd",
+	// }
+
+	// dynamoDbService.SomePackageFunction()
+
 }

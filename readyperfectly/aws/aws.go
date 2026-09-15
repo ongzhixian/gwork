@@ -12,11 +12,13 @@ import (
 type AwsServiceFactory struct {
 	ProfileName string
 	AwsConfig   aws.Config
+	Context     context.Context
 }
 
 func GetAwsServiceFactory(profileName string) (*AwsServiceFactory, error) {
+	backgroundContext := context.Background()
 	cfg, err := config.LoadDefaultConfig(
-		context.Background(),
+		backgroundContext,
 		config.WithSharedConfigProfile(profileName),
 	)
 	if err != nil {
@@ -26,9 +28,10 @@ func GetAwsServiceFactory(profileName string) (*AwsServiceFactory, error) {
 	return &AwsServiceFactory{
 		ProfileName: profileName,
 		AwsConfig:   cfg,
+		Context:     backgroundContext,
 	}, nil
 }
 
 func (factory AwsServiceFactory) GetDynamoDbService() *dynamoDb.DynamoDbService {
-	return dynamoDb.NewDynamoDbService(factory.AwsConfig)
+	return dynamoDb.NewDynamoDbService(factory.Context, factory.AwsConfig)
 }
